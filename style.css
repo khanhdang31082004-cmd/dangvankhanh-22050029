@@ -1,0 +1,95 @@
+:root { 
+    --primary: #10b981; 
+    --primary-dark: #059669; 
+    --bg-light: #f8fafc;
+    --text-main: #1e293b;
+    --header-h: 72px;
+}
+
+body { 
+    font-family: 'Quicksand', sans-serif; 
+    background: var(--bg-light); 
+    color: var(--text-main);
+    margin: 0;
+}
+
+/* --- BỐ CỤC KHÔNG VỠ (CORE) --- */
+.main-layout { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+header {
+    height: var(--header-h);
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0; 
+}
+
+.pos-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 380px; 
+    height: calc(100vh - var(--header-h)); 
+    overflow: hidden; 
+}
+
+/* --- ÉP KHUNG HEADER --- */
+header .flex { align-items: center; }
+
+.menu-btn {
+    white-space: nowrap; 
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+    border-radius: 12px;
+}
+
+.menu-btn.active-tab {
+    background: #ecfdf5 !important;
+    color: var(--primary) !important;
+    box-shadow: inset 0 0 0 1px #d1fae5;
+}
+
+/* --- TAB & NỘI DUNG --- */
+.tab-content { display: none; height: 100%; overflow-y: auto; padding: 0; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+/* --- PHÂN QUYỀN --- */
+.role-staff .admin-only { display: none !important; }
+.role-customer .internal-ui { display: none !important; }
+.customer-ui { display: none; }
+.role-customer .customer-ui { display: block !important; }
+
+/* --- CARD SẢN PHẨM --- */
+.card-modern { 
+    background: white; 
+    border-radius: 1.25rem; 
+    border: 1px solid #e2e8f0; 
+    transition: all 0.2s;
+}
+.card-modern:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1); 
+    border-color: var(--primary); 
+}
+
+.product-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 1rem; 
+    padding: 1.25rem;
+}
+
+.fancy-gradient { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+@media print { .no-print { display: none !important; } }

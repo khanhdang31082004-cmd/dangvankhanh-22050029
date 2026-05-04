@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khánh Văn POS - Hệ thống quản lý</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Quicksand', sans-serif; background-color: #f1f5f9; }
+        .role-superadmin .internal-ui, .role-superadmin .customer-ui { display: none !important; }
+        body:not(.role-superadmin) .superadmin-only { display: none !important; }
+        .btn-3d { transition: all 0.15s ease-in-out; border-bottom-width: 4px; border-color: inherit; }
+        .btn-3d:active { border-bottom-width: 0px !important; transform: translateY(4px); margin-bottom: 4px;}
+        .card-modern { background: #ffffff; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        .card-modern:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(-3px); border-color: #cbd5e1; }
+        .modal-backdrop { background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="role-admin h-screen overflow-hidden bg-slate-50" id="appBody">
+
+    <div id="systemLoginModal" class="fixed inset-0 bg-white flex z-[999] overflow-hidden">
+        <div class="hidden lg:flex w-1/2 relative bg-[#0b1426] text-white flex-col justify-between p-16">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-900/50 to-gray-900/90 z-0"></div>
+            <div class="relative z-10">
+                <div class="flex items-center space-x-3 mb-16">
+                    <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-2xl shadow-lg border-b-4 border-emerald-700"><i class="fa-solid fa-cloud"></i></div>
+                    <span class="font-black text-3xl tracking-tight">Khánh Văn<span class="text-emerald-400">.POS</span></span>
+                </div>
+                <h1 class="text-5xl font-black mb-6 leading-tight drop-shadow-lg">Hệ thống quản lý<br>bán hàng tập trung</h1>
+                <p class="text-lg text-emerald-100/80 font-medium max-w-md leading-relaxed">
+                    Đăng nhập để vào không gian làm việc. Kiểm soát mọi giao dịch, kho hàng và báo cáo doanh thu theo thời gian thực.
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-1/2 flex items-center justify-center relative bg-white p-8">
+            <a href="index.html" class="absolute top-8 left-8 text-gray-400 hover:text-emerald-600 font-bold flex items-center transition-all hover:-translate-x-1">
+                <i class="fa-solid fa-chevron-left mr-2"></i> Trang chủ
+            </a>
+            <div class="w-full max-w-md">
+                <div id="formAdminLogin">
+                    <div class="mb-10 text-center lg:text-left">
+                        <h2 class="text-4xl font-black text-gray-900 mb-2">Đăng nhập</h2>
+                        <p class="text-gray-500 font-bold text-sm">Chào mừng trở lại! Vui lòng nhập tài khoản.</p>
+                    </div>
+                    <div id="sysLoginError" class="text-red-500 text-xs font-black mb-6 hidden bg-red-50 py-3 rounded-xl border-l-4 border-red-500 px-4"></div>
+                    <div class="space-y-5 mb-8">
+                        <input type="hidden" id="sysStoreName" value="">
+                        <button type="button" id="sysToggleBtn" class="hidden"></button>
+                        
+                        <div>
+                            <label class="block text-[11px] font-black text-gray-500 mb-2 uppercase tracking-widest">Tên đăng nhập</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="sysUsername" placeholder="Ví dụ: admin1" class="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl outline-none font-bold border border-slate-200 focus:border-emerald-500 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-[11px] font-black text-gray-500 uppercase tracking-widest">Mật khẩu</label>
+                                <button type="button" onclick="showForgotModal()" class="text-[11px] font-bold text-emerald-600 hover:underline">Quên mật khẩu?</button>
+                            </div>
+                            <div class="relative">
+                                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="password" id="sysPassword" placeholder="••••••••" class="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl outline-none font-bold border border-slate-200 focus:border-emerald-500 focus:bg-white transition-all" onkeypress="if(event.key === 'Enter') systemAuth()">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="sysAuthBtn" onclick="systemAuth()" class="btn-3d w-full bg-emerald-500 text-white py-4 rounded-2xl font-black text-lg border-b-4 border-emerald-700 hover:bg-emerald-400 transition-all shadow-lg">
+                        VÀO HỆ THỐNG
+                    </button>
+                    <div class="mt-8 text-center border-t border-gray-100 pt-6">
+                        <button onclick="switchLoginView('customer')" class="text-gray-500 font-bold text-sm hover:text-emerald-600 transition-all flex items-center justify-center w-full group">
+                            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center mr-2 group-hover:bg-emerald-100 transition-colors"><i class="fa-solid fa-bag-shopping"></i></div>
+                            Tôi là Khách hàng mua sắm
+                        </button>
+                    </div>
+                </div>
+
+                <div id="formCustomerLogin" class="hidden">
+                    <div class="mb-10 text-center">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 text-3xl mx-auto"><i class="fa-solid fa-shopping-bag"></i></div>
+                        <h2 class="text-4xl font-black text-gray-900 mb-2">Mua Sắm</h2>
+                    </div>
+                    <div class="mb-8">
+                        <label class="block text-[11px] font-black text-gray-500 mb-2 uppercase tracking-widest">Khu vực cửa hàng</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 z-10"></i>
+                            <select id="cusStoreSelector" class="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl outline-none font-black text-blue-700 border border-slate-200 focus:border-blue-500 focus:bg-white transition-all cursor-pointer appearance-none relative z-0">
+                                <option value="">-- Đang tải danh sách... --</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10"></i>
+                        </div>
+                    </div>
+                    <button onclick="enterCustomerMode()" class="btn-3d w-full bg-gray-900 text-white py-4 rounded-2xl font-black text-lg border-b-4 border-black hover:bg-gray-800 transition-all shadow-lg">
+                        BẮT ĐẦU MUA
+                    </button>
+                    <div class="mt-8 text-center border-t border-gray-100 pt-6">
+                        <button onclick="switchLoginView('admin')" class="text-gray-500 font-bold text-sm hover:text-blue-600 transition-all flex items-center justify-center w-full group">
+                            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center mr-2 group-hover:bg-blue-100 transition-colors"><i class="fa-solid fa-user-shield"></i></div>
+                            Quay lại Đăng nhập Quản trị
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotPasswordModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-[1000] p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300 border-b-8 border-gray-900 p-8 text-center relative" id="forgotModalContent">
+            <button onclick="closeForgotModal()" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-500 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"><i class="fa-solid fa-times"></i></button>
+            <div class="w-20 h-20 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6"><i class="fa-solid fa-headset"></i></div>
+            <h2 class="text-2xl font-black text-gray-900 mb-2">Quên Mật Khẩu?</h2>
+            <p class="text-sm text-gray-500 font-medium mb-6">Vui lòng liên hệ Tổng đài Admin để xác minh và lấy lại mật khẩu.</p>
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-6">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Hotline Hỗ trợ (24/7)</p>
+                <p class="text-3xl font-black text-emerald-600 tracking-wider">0348.660.610</p>
+            </div>
+            <button onclick="closeForgotModal()" class="btn-3d w-full py-3.5 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition border-b-4 border-black">ĐÃ HIỂU & ĐÓNG</button>
+        </div>
+    </div>
+
+    <div class="main-layout h-screen flex flex-col w-full hidden-until-login">
+        
+        <header class="bg-white shadow-sm border-b border-gray-200 z-50 w-full flex-shrink-0 relative">
+            <div class="flex items-center justify-between px-6 py-3 h-[70px]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md border-b-2 border-emerald-700"><i class="fa-solid fa-cloud"></i></div>
+                    <div>
+                        <h1 class="text-xl font-black text-gray-900 leading-none">Khánh Văn<span class="text-emerald-500">.POS</span></h1>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tight mt-1">Workspace</p>
+                    </div>
+                </div>
+
+                <nav class="internal-ui flex items-center space-x-1.5 bg-slate-100 p-1.5 rounded-full border border-slate-200">
+                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="menu-btn admin-only px-5 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:text-emerald-600 transition-all active-tab shadow-sm border border-slate-200 bg-white">TỔNG QUAN</button>
+                    <button onclick="switchTab('pos')" id="btn-pos" class="menu-btn px-5 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:text-emerald-600 transition-all">BÁN TẠI QUẦY</button>
+                    <button onclick="switchTab('online')" id="btn-online" class="menu-btn px-5 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:text-emerald-600 transition-all relative">ĐƠN ONLINE <span id="onlineBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] w-4.5 h-4.5 rounded-full hidden flex items-center justify-center border-2 border-white">0</span></button>
+                    <button onclick="switchTab('inventory')" id="btn-inventory" class="menu-btn admin-only px-5 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:text-emerald-600 transition-all">KHO HÀNG</button>
+                    <button onclick="switchTab('customers')" id="btn-customers" class="menu-btn px-5 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:text-emerald-600 transition-all">KHÁCH HÀNG</button>
+                </nav>
+
+                <nav class="superadmin-only flex items-center space-x-1 bg-slate-100 p-1.5 rounded-full border border-slate-200">
+                    <button onclick="switchTab('superadmin')" id="btn-superadmin" class="menu-btn active-tab px-6 py-2.5 rounded-full font-black text-sm text-emerald-600 bg-white shadow-md transition-all border border-slate-200"><i class="fa-solid fa-shield-halved mr-2"></i> QUẢN TRỊ TỔNG</button>
+                </nav>
+
+                <div class="customer-ui hidden flex items-center space-x-3">
+                    <button onclick="openCustomerCart()" class="relative p-3 bg-slate-100 rounded-full hover:bg-slate-200 transition text-emerald-600 shadow-inner border border-slate-200"><i class="fa-solid fa-cart-shopping text-xl"></i><span id="appCartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span></button>
+                </div>
+
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="document.getElementById('avatarInput').click()">
+                    <div class="text-right border-r pr-4 border-gray-100 hidden sm:block">
+                        <div class="text-[9px] text-gray-400 font-black tracking-widest uppercase">Cửa hàng</div>
+                        <div id="headerStoreName" class="text-sm font-black text-gray-800">...</div>
+                    </div>
+                    <div class="relative w-11 h-11 shadow-sm rounded-full border-2 border-emerald-300 p-0.5 bg-white group-hover:scale-105 transition"><img id="headerAvatarImg" src="https://i.pravatar.cc/40?u=admin" class="w-full h-full rounded-full object-cover"></div>
+                    <button onclick="event.stopPropagation(); systemLogout()" class="text-[10px] font-bold text-rose-500 hover:underline flex items-center"><i class="fa-solid fa-power-off mr-1"></i> THOÁT</button>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar()">
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-hidden bg-slate-50 no-print">
+            
+            <div id="tab-dashboard" class="tab-content p-8 internal-ui admin-only h-full overflow-y-auto">
+                <div class="max-w-[1600px] mx-auto">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-3xl font-black text-gray-900 mb-1">Báo cáo Tổng quan</h2>
+                            <p class="text-gray-500 font-medium text-sm flex items-center"><i class="fa-solid fa-location-dot mr-2 text-emerald-500"></i> Dữ liệu Real-time tại chi nhánh: <span id="dashStoreName" class="ml-1 font-bold text-gray-800">...</span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                        <div class="card-modern p-6 flex flex-col justify-between border-l-4 border-l-emerald-500 relative overflow-hidden">
+                            <p class="text-gray-400 text-xs font-black uppercase mb-1">Doanh Thu Tổng</p>
+                            <h3 class="text-3xl font-black text-emerald-600" id="dashTotalRev">0đ</h3>
+                        </div>
+                        <div class="card-modern p-6 flex flex-col justify-between border-l-4 border-l-blue-500 relative overflow-hidden">
+                            <p class="text-gray-400 text-xs font-black uppercase mb-1">Tại Quầy (Offline)</p>
+                            <h3 class="text-2xl font-black text-gray-800" id="dashOfflineRev">0đ</h3>
+                        </div>
+                        <div class="card-modern p-6 flex flex-col justify-between border-l-4 border-l-purple-500 relative overflow-hidden">
+                            <p class="text-gray-400 text-xs font-black uppercase mb-1">Qua Website (Online)</p>
+                            <h3 class="text-2xl font-black text-gray-800" id="dashOnlineRev">0đ</h3>
+                        </div>
+                        <div class="card-modern p-6 flex flex-col justify-between border-l-4 border-l-orange-500 bg-orange-50/30 relative overflow-hidden">
+                            <p class="text-orange-600 text-xs font-black uppercase mb-1">Lợi Nhuận Thuần</p>
+                            <h3 class="text-2xl font-black text-orange-600" id="dashProfit">0đ</h3>
+                        </div>
+                    </div>
+
+                    <div class="card-modern overflow-hidden mb-10">
+                        <div class="bg-gray-900 px-6 py-4 border-b flex justify-between items-center"><h3 class="font-bold text-white text-sm">TOP SẢN PHẨM BÁN CHẠY</h3></div>
+                        <div class="p-6">
+                            <table class="w-full text-left text-sm"><thead class="text-[10px] uppercase text-gray-400 font-black border-b"><tr><th class="pb-3 text-left">Sản Phẩm</th><th class="pb-3 text-right">SL Bán</th></tr></thead><tbody id="topProductsList" class="divide-y divide-gray-50"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-pos" class="tab-content internal-ui h-full overflow-hidden">
+                <div class="pos-grid h-full max-w-[1600px] mx-auto flex">
+                    
+                    <div class="flex flex-col bg-slate-50 h-full overflow-hidden border-r border-gray-200 flex-1">
+                        <div class="p-5 bg-white border-b border-gray-200 flex flex-col space-y-4 flex-shrink-0 z-10">
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 text-lg"></i>
+                                <input type="text" id="searchInput" onkeyup="renderProducts()" class="w-full pl-12 pr-4 py-3.5 bg-slate-100 rounded-full outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold text-gray-700 shadow-inner" placeholder="Tìm tên hàng hoặc quét mã vạch...">
+                            </div>
+                            <div id="categoryFilter" class="flex space-x-2 overflow-x-auto no-scrollbar pb-1"></div>
+                        </div>
+                        <div id="productList" class="product-grid overflow-y-auto flex-1 p-5 content-start"></div>
+                    </div>
+
+                    <div class="bg-white flex flex-col h-full relative shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.05)] w-full lg:w-[400px] xl:w-[450px] flex-shrink-0">
+                        
+                        <div class="p-5 border-b border-gray-200 flex-shrink-0 z-10 bg-white">
+                            <div class="flex items-center bg-blue-50/50 border border-blue-100 p-3 rounded-2xl">
+                                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3"><i class="fa-solid fa-user"></i></div>
+                                <input type="text" id="customerName" list="customerDataList" class="bg-transparent font-bold text-gray-800 w-full outline-none text-lg placeholder-gray-400" value="Khách lẻ" onchange="saveSession()">
+                                <datalist id="customerDataList"></datalist>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto p-5 min-h-0 bg-slate-50/50" id="cartContainer">
+                            <div id="emptyCartMsg" class="flex flex-col items-center justify-center h-full text-gray-300">
+                                <div class="w-24 h-24 bg-white shadow-sm rounded-full flex items-center justify-center mb-4 border border-gray-100"><i class="fa-solid fa-basket-shopping text-4xl text-gray-200"></i></div>
+                                <p class="font-bold text-gray-400">Chưa có sản phẩm nào</p>
+                            </div>
+                            <table class="w-full text-sm"><tbody id="cartList" class="divide-y divide-gray-100"></tbody></table>
+                        </div>
+                        
+                        <div class="p-6 bg-white border-t border-gray-200 flex-shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20">
+                            <div class="flex justify-between mb-2 text-sm font-bold text-gray-500"><span>Tổng tiền hàng:</span><span id="subTotal" class="text-gray-800">0đ</span></div>
+                            <div class="flex justify-between items-end mb-6"><span class="font-black text-gray-900 text-lg">KHÁCH CẦN TRẢ</span><span id="finalTotal" class="text-4xl font-black text-emerald-600 tracking-tight">0đ</span></div>
+                            <div class="flex space-x-3 mb-4">
+                                <button id="btnPayCash" onclick="setPayment('cash')" class="btn-3d flex-1 py-3.5 bg-emerald-50 border-2 border-emerald-500 text-emerald-700 rounded-xl font-bold text-xs shadow-sm border-b-4 border-b-emerald-600">TIỀN MẶT</button>
+                                <button id="btnPayQR" onclick="setPayment('qr')" class="btn-3d flex-1 py-3.5 bg-slate-100 text-gray-600 rounded-xl font-bold text-xs border-b-4 border-slate-300 hover:bg-slate-200">CHUYỂN KHOẢN</button>
+                            </div>
+                            <button onclick="checkout()" class="btn-3d w-full bg-gray-900 text-white font-black py-5 rounded-2xl shadow-lg border-b-4 border-black hover:bg-gray-800 text-lg tracking-wide flex justify-center items-center">
+                                THANH TOÁN (F9)
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="tab-online" class="tab-content p-8 internal-ui h-full overflow-y-auto">
+                <div class="max-w-6xl mx-auto">
+                    <div class="flex justify-between items-end mb-8">
+                        <h2 class="text-3xl font-black text-gray-900 mb-1">Duyệt Đơn Online</h2>
+                        <div class="bg-red-50 text-red-600 px-4 py-2 rounded-xl border border-red-100 shadow-sm text-sm font-bold flex items-center"><i class="fa-solid fa-bell mr-2 animate-pulse"></i> Chờ duyệt</div>
+                    </div>
+                    <div class="card-modern overflow-hidden"><table class="w-full text-left bg-white text-sm"><thead class="bg-slate-50 text-[11px] font-black uppercase tracking-widest text-gray-500 border-b border-gray-200"><tr><th class="p-5">Mã Đơn</th><th class="p-5">Khách Hàng</th><th class="p-5 text-right">Tổng Tiền</th><th class="p-5 text-center">Thao Tác</th></tr></thead><tbody id="onlineOrdersList" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+
+            <div id="tab-inventory" class="tab-content p-8 internal-ui admin-only h-full overflow-y-auto">
+                <div class="max-w-6xl mx-auto">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-black text-gray-900 mb-1">Quản Lý Kho Hàng</h2>
+                        <button onclick="openProductModal()" class="btn-3d bg-emerald-500 px-6 py-3 rounded-xl text-white font-bold border-b-4 border-emerald-700 shadow-md hover:bg-emerald-400 flex items-center"><i class="fa-solid fa-plus mr-2"></i> Thêm Sản Phẩm</button>
+                    </div>
+                    <div class="card-modern overflow-hidden"><table class="w-full text-left bg-white text-sm"><thead class="bg-slate-50 text-[11px] font-black uppercase tracking-widest text-gray-500 border-b border-gray-200"><tr><th class="p-5">Sản Phẩm</th><th class="p-5">Giá Vốn</th><th class="p-5">Giá Bán</th><th class="p-5 text-center">Tồn Kho</th></tr></thead><tbody id="inventoryList" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+
+            <div id="tab-customers" class="tab-content p-8 internal-ui h-full overflow-y-auto">
+                <div class="max-w-6xl mx-auto">
+                    <div class="mb-8"><h2 class="text-3xl font-black text-gray-900 mb-1">Dữ liệu Khách Hàng (CRM)</h2></div>
+                    <div class="card-modern overflow-hidden"><table class="w-full text-left bg-white text-sm"><thead class="bg-slate-50 text-[11px] font-black uppercase tracking-widest text-gray-500 border-b border-gray-200"><tr><th class="p-5">Khách Hàng</th><th class="p-5 text-center">Đơn Tại Quầy</th><th class="p-5 text-center">Đơn Online</th><th class="p-5 text-right">Tổng Chi Tiêu</th></tr></thead><tbody id="customersList" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+            
+            <div id="tab-storefront" class="tab-content customer-ui h-full overflow-y-auto bg-slate-50">
+                <div class="bg-gray-900 pt-12 pb-20 px-6 text-white text-center rounded-b-[2rem] shadow-xl relative z-10 border-b-8 border-emerald-500">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 rounded-b-[2rem]"></div>
+                    <div class="w-20 h-20 bg-white/10 rounded-[1.5rem] mx-auto mb-4 flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/20"><i class="fa-solid fa-shop text-white text-4xl"></i></div>
+                    <h2 class="text-3xl font-black text-white">Khánh Văn Store</h2>
+                    <p class="opacity-80 text-sm mt-1" id="storefrontDesc">Giao hàng 30 phút • Sản phẩm chất lượng</p>
+                </div>
+                <div class="max-w-4xl mx-auto p-6 -mt-8 relative z-20">
+                    <div class="bg-white p-2 rounded-full mb-8 flex items-center shadow-xl border border-gray-100">
+                        <i class="fa-solid fa-search text-emerald-500 ml-3"></i>
+                        <input type="text" id="appSearchInput" onkeyup="renderAppProducts()" class="w-full p-2 outline-none font-bold" placeholder="Hôm nay sếp muốn mua gì?">
+                    </div>
+                    <div id="appProductList" class="product-grid"></div>
+                </div>
+                <div class="h-24"></div> 
+            </div>
+
+            <div id="tab-superadmin" class="tab-content p-8 superadmin-only h-full overflow-y-auto bg-slate-900 text-white">
+                <div class="max-w-7xl mx-auto">
+                    <div class="mb-10 text-center"><h2 class="text-4xl font-black text-emerald-400">TỔNG ĐÀI ĐIỀU HÀNH SAAS</h2><p class="text-slate-400">Giám sát tài chính và quản lý nền tảng</p></div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10"><div class="bg-slate-800 p-6 rounded-2xl shadow border border-slate-700"><p class="text-slate-500 text-xs font-bold uppercase mb-1">Cửa Hàng</p><h3 class="text-3xl font-black" id="saTotalStores">0</h3></div><div class="bg-slate-800 p-6 rounded-2xl shadow border border-slate-700 border-l-4 border-l-emerald-500"><p class="text-slate-500 text-xs font-bold uppercase mb-1">GD Toàn Nền Tảng</p><h3 class="text-3xl font-black text-emerald-400" id="saTotalRev">0đ</h3></div><div class="bg-slate-800 p-6 rounded-2xl shadow border border-slate-700 border-l-4 border-l-blue-500"><p class="text-slate-500 text-xs font-bold uppercase mb-1">Số Khách Mua</p><h3 class="text-3xl font-black text-blue-400" id="saTotalCus">0</h3></div><div class="bg-emerald-950 p-6 rounded-2xl shadow border border-emerald-800"><p class="text-emerald-300 text-xs font-bold uppercase mb-1">Hệ Số Phí Thu (5%)</p><h3 class="text-3xl font-black text-emerald-400" id="saPlatformFee">0đ</h3></div></div>
+                    <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700"><h3 class="font-bold mb-5 flex items-center"><i class="fa-solid fa-network-wired text-emerald-400 mr-3"></i> Quản Lý Ủy Quyền Chi Nhánh</h3><table class="w-full text-left text-sm"><thead class="bg-slate-900 text-slate-500 text-xs uppercase font-black"><tr><th class="p-4">Cơ Sở ID</th><th class="p-4">Tên Điểm</th><th class="p-4">Sếp</th><th class="p-4 text-right">Doanh Số</th><th class="p-4 text-center">Tình Trạng</th><th class="p-4 text-center">Xử lý (Boss)</th></tr></thead><tbody id="superAdminStoreList" class="divide-y divide-slate-700"></tbody></table></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+   <div id="receiptModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex justify-center items-center z-[100] p-4">
+        <div class="bg-white rounded-[1.5rem] shadow-2xl w-[380px] max-w-full text-black border-t-8 border-emerald-500 relative flex flex-col max-h-[90vh]">
+            
+            <div class="p-6 pb-2 flex-shrink-0 relative">
+                <button onclick="closeReceipt()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-slate-100 text-gray-500 rounded-full hover:bg-rose-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-sm"></i></button>
+                <div class="text-center mt-2">
+                    <h3 class="font-black text-2xl tracking-tight text-gray-900" id="billStoreName"></h3>
+                    <p class="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest" id="billDate"></p>
+                </div>
+                <div class="border-t-2 border-dashed border-gray-200 mt-5 mb-3"></div>
+                <div class="text-xs font-bold text-gray-500 tracking-wider">KHÁCH HÀNG: <span id="billCustomer" class="text-gray-900 font-black"></span></div>
+            </div>
+
+            <div class="overflow-y-auto px-6 py-2 flex-1 min-h-0 bg-slate-50/50">
+                <table class="w-full text-xs font-medium text-gray-700">
+                    <tbody id="billItems" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+
+            <div class="p-6 pt-3 flex-shrink-0">
+                <div class="border-t-2 border-dashed border-gray-200 mb-4"></div>
+                <div class="flex justify-between items-end font-black">
+                    <span class="text-gray-500 text-sm tracking-widest uppercase">TỔNG TRẢ:</span>
+                    <span id="billTotal" class="text-emerald-600 text-3xl leading-none"></span>
+                </div>
+                <div id="qrContainer" class="mt-5 text-center hidden">
+                    <div class="inline-block p-2 border border-gray-200 rounded-2xl bg-white shadow-sm mb-2">
+                        <img id="qrImage" class="w-28 h-28 mx-auto rounded-xl">
+                    </div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Quét QR Thanh toán</p>
+                </div>
+                <div class="mt-6 flex space-x-3 no-print">
+                    <button onclick="window.print()" class="btn-3d flex-1 bg-gray-900 text-white py-3.5 rounded-xl font-black text-sm border-b-4 border-black hover:bg-gray-800">IN BILL</button>
+                    <button onclick="closeReceipt()" class="btn-3d flex-1 bg-slate-100 text-gray-700 py-3.5 rounded-xl font-black text-sm border-b-4 border-slate-300 hover:bg-slate-200">ĐÓNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addProductModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-[100] no-print p-4">
+        <div class="bg-white p-8 rounded-2xl w-[380px] max-w-full shadow-2xl">
+            <h3 class="font-black text-xl mb-6">Thêm Sản Phẩm Mới</h3>
+            <div class="space-y-4">
+                <input type="text" id="newPName" placeholder="Tên hàng hóa" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                <input type="text" id="newPCat" placeholder="Danh mục" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="newPCost" placeholder="Giá vốn" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                    <input type="number" id="newPPrice" placeholder="Giá Bán" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="newPStock" placeholder="Tồn kho" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                    <input type="text" id="newPIcon" placeholder="Icon (VD: 📦)" class="w-full p-3 bg-slate-50 border rounded-lg outline-none font-bold">
+                </div>
+            </div>
+            <div class="flex space-x-3 mt-8">
+                <button onclick="saveProduct()" class="btn-3d flex-1 bg-emerald-500 text-white py-3 rounded-xl font-bold border-b-4 border-emerald-700">LƯU KHO</button>
+                <button onclick="document.getElementById('addProductModal').classList.add('hidden')" class="btn-3d bg-slate-100 px-6 py-3 rounded-xl font-bold border-b-4 border-slate-300">HỦY</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customerCartModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex justify-center items-end sm:items-center z-[100] no-print">
+        <div class="bg-white w-full sm:w-[400px] sm:rounded-[1.5rem] overflow-hidden flex flex-col shadow-2xl h-[90vh] sm:h-auto sm:border border-gray-100">
+            <div class="bg-gray-900 p-5 text-white flex justify-between items-center"><span class="font-black text-lg">🛒 Xác nhận Thông Tin</span><button onclick="document.getElementById('customerCartModal').classList.add('hidden')"><i class="fa-solid fa-times text-xl"></i></button></div>
+            <div class="p-4 flex-1 overflow-y-auto bg-slate-50 min-h-[150px]" id="appCartItems"></div>
+            <div class="p-6 border-t bg-white relative">
+                <div id="appErrorMsg" class="text-red-500 text-xs font-black text-center mb-3 hidden bg-red-50 py-2 rounded-lg border border-red-200 px-2"></div>
+                <div class="space-y-3 mb-4"><input type="text" id="appCusName" placeholder="Họ và tên người nhận" class="w-full p-3.5 rounded-xl border outline-none font-bold bg-slate-50"><input type="tel" id="appCusPhone" placeholder="Số điện thoại nhận hàng" class="w-full p-3.5 rounded-xl border outline-none font-bold bg-slate-50"></div>
+                <div class="flex justify-between items-center font-black text-lg mb-6"><span class="text-gray-700">TỔNG CỘNG:</span><span id="appCartTotal" class="text-3xl text-emerald-600">0đ</span></div>
+                <button onclick="submitCustomerOrder()" class="btn-3d w-full bg-emerald-500 text-white py-4 rounded-2xl font-black text-xl border-b-4 border-emerald-700 hover:bg-emerald-400">CHỐT ĐƠN NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const forgotModal = document.getElementById('forgotPasswordModal'); const forgotContent = document.getElementById('forgotModalContent');
+        function showForgotModal() { forgotModal.classList.remove('hidden'); setTimeout(() => { forgotModal.classList.remove('opacity-0'); forgotContent.classList.remove('scale-95'); }, 10); }
+        function closeForgotModal() { forgotModal.classList.add('opacity-0'); forgotContent.classList.add('scale-95'); setTimeout(() => forgotModal.classList.add('hidden'), 300); }
+    </script>
+</body>
+</html>

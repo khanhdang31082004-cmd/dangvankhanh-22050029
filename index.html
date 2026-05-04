@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khánh Văn POS - Nền tảng quản lý bán hàng chuẩn Doanh nghiệp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* BẬT CUỘN TRANG MƯỢT MÀ */
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        section { scroll-margin-top: 80px; } /* Tránh bị menu che khi cuộn */
+
+        .sapo-dark { background-color: #08142c; } 
+        .modal-backdrop { background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); }
+        input[type="checkbox"] { width: 1.3rem; height: 1.3rem; accent-color: #10b981; cursor: pointer; border-radius: 4px; }
+        
+        /* NÚT BẤM 3D */
+        .btn-3d { transition: all 0.15s ease-in-out; border-bottom-width: 4px; border-color: inherit; }
+        .btn-3d:active { border-bottom-width: 0px !important; transform: translateY(4px); margin-bottom: 4px;}
+        .btn-3d:hover { filter: brightness(1.1); }
+        
+        /* Hiệu ứng nhấp nháy cho logo đối tác */
+        .partner-pill { transition: all 0.3s ease; }
+        .partner-pill:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: #10b981; color: #10b981; }
+    </style>
+</head>
+<body class="relative">
+
+    <nav class="bg-white shadow-sm fixed w-full z-50 top-0 border-b border-gray-100">
+        <div class="max-w-[1200px] mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="#trangchu" class="flex items-center space-x-2 group">
+                <div class="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md border-b-2 border-emerald-700 group-hover:scale-105 transition"><i class="fa-solid fa-cloud"></i></div>
+                <span class="font-black text-2xl text-gray-800 tracking-tight">Khánh Văn<span class="text-emerald-500">.POS</span></span>
+            </a>
+            
+            <div class="hidden md:flex space-x-8 font-bold text-gray-600 text-[15px]">
+                <a href="#trangchu" class="hover:text-emerald-600 transition-colors py-2">Trang chủ</a>
+                <a href="#giaiphap" class="hover:text-emerald-600 transition-colors py-2">Giải pháp</a>
+                <a href="#tichhop" class="hover:text-emerald-600 transition-colors py-2">Đa kênh</a>
+                <a href="#banggia" class="hover:text-emerald-600 transition-colors py-2">Bảng giá</a>
+                <a href="#khachhang" class="hover:text-emerald-600 transition-colors py-2">Khách hàng</a> </div>
+
+            <div class="flex items-center space-x-5">
+                <a href="app.html" class="font-bold text-gray-600 hover:text-emerald-600 transition-colors text-[15px]">Đăng nhập</a>
+                <button onclick="toggleRegisterModal()" class="btn-3d px-7 py-2.5 bg-emerald-500 text-white font-bold rounded-full border-b-4 border-emerald-700 shadow-md">Đăng ký</button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="trangchu" class="sapo-dark pt-32 pb-0 relative overflow-hidden text-white">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
+        
+        <div class="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
+            <div class="inline-block bg-emerald-500/20 text-emerald-400 font-bold px-5 py-2 rounded-full text-sm mb-6 border border-emerald-500/30 shadow-inner backdrop-blur-sm">
+                <i class="fa-solid fa-rocket mr-2"></i> Chuyển đổi số toàn diện cho Doanh nghiệp
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-[1.2] tracking-tight">
+                Quản lý bán hàng hợp kênh <br> 
+                <span class="text-emerald-400">hiệu quả & tối ưu nhất</span>
+            </h1>
+            <p class="text-[17px] text-gray-400 mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
+                Đồng bộ đơn hàng từ Website về POS thu ngân. Quản lý kho, tính toán lợi nhuận và giám sát đa chi nhánh trong một nền tảng duy nhất.
+            </p>
+            <button onclick="toggleRegisterModal()" class="btn-3d text-lg font-black px-10 py-4 bg-emerald-500 text-white rounded-full border-b-4 border-emerald-700 hover:bg-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.3)] mb-16">
+                Bắt đầu dùng thử miễn phí <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+
+            <div class="max-w-5xl mx-auto bg-slate-50 rounded-t-[2rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] overflow-hidden border-t-8 border-emerald-500 transform translate-y-4">
+                <div class="bg-gray-200 px-4 py-3 flex space-x-2 border-b border-gray-300">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                    <div class="col-span-1 md:col-span-3 flex justify-between items-center mb-2">
+                        <h3 class="text-gray-800 font-black text-xl">Báo cáo Tổng quan</h3>
+                        <span class="text-emerald-500 font-bold text-sm"><i class="fa-solid fa-circle-check mr-1"></i> Real-time</span>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-emerald-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">Doanh thu tổng</p>
+                        <h4 class="text-2xl font-black text-emerald-600">125.400.000đ</h4>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-blue-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">Đơn tại quầy</p>
+                        <h4 class="text-2xl font-black text-gray-800">89.200.000đ</h4>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-orange-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">Lợi nhuận thuần</p>
+                        <h4 class="text-2xl font-black text-orange-600">45.800.000đ</h4>
+                    </div>
+                    <div class="col-span-1 md:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-48 flex items-end justify-around pb-0">
+                        <div class="w-12 bg-blue-100 rounded-t-lg h-[40%]"></div>
+                        <div class="w-12 bg-blue-200 rounded-t-lg h-[60%]"></div>
+                        <div class="w-12 bg-blue-300 rounded-t-lg h-[50%]"></div>
+                        <div class="w-12 bg-blue-400 rounded-t-lg h-[80%]"></div>
+                        <div class="w-12 bg-emerald-500 rounded-t-lg h-[100%] shadow-[0_-5px_15px_rgba(16,185,129,0.3)]"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tichhop" class="py-20 bg-white border-b border-gray-100">
+        <div class="max-w-[1200px] mx-auto px-6 text-center">
+            <h2 class="text-2xl md:text-3xl font-black text-gray-900 mb-4">Kết nối đa kênh - Vận hành liền mạch</h2>
+            <p class="text-gray-500 font-medium mb-10">Tích hợp sẵn sàng với các đối tác Vận chuyển, Thanh toán và Sàn TMĐT hàng đầu.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+                <div class="partner-pill bg-slate-50 border border-slate-200 px-6 py-3 rounded-full text-gray-700 font-bold flex items-center cursor-pointer"><i class="fa-brands fa-tiktok text-xl mr-2 text-black"></i> TikTok Shop</div>
+                <div class="partner-pill bg-slate-50 border border-slate-200 px-6 py-3 rounded-full text-gray-700 font-bold flex items-center cursor-pointer"><i class="fa-solid fa-bag-shopping text-xl mr-2 text-orange-500"></i> Shopee</div>
+                <div class="partner-pill bg-slate-50 border border-slate-200 px-6 py-3 rounded-full text-gray-700 font-bold flex items-center cursor-pointer"><i class="fa-brands fa-facebook text-xl mr-2 text-blue-600"></i> Facebook Page</div>
+                <div class="partner-pill bg-slate-50 border border-slate-200 px-6 py-3 rounded-full text-gray-700 font-bold flex items-center cursor-pointer"><i class="fa-solid fa-truck-fast text-xl mr-2 text-emerald-600"></i> Giao Hàng Nhanh</div>
+                <div class="partner-pill bg-slate-50 border border-slate-200 px-6 py-3 rounded-full text-gray-700 font-bold flex items-center cursor-pointer"><i class="fa-solid fa-qrcode text-xl mr-2 text-blue-500"></i> VNPay / Momo</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="giaiphap" class="py-24 bg-slate-50">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="text-center mb-20">
+                <p class="text-emerald-500 font-black uppercase tracking-widest text-sm mb-2">TÍNH NĂNG VƯỢT TRỘI</p>
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Vận hành trơn tru mọi hoạt động cửa hàng</h2>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12 mb-24">
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=800" alt="POS System" class="rounded-[2rem] shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6"><i class="fa-solid fa-desktop"></i></div>
+                    <h3 class="text-3xl font-black text-gray-900 mb-4">Phần mềm bán hàng tại quầy (POS) nhanh chóng</h3>
+                    <p class="text-gray-500 font-medium mb-6 leading-relaxed">Giao diện màn hình thu ngân được thiết kế tối giản, loại bỏ các thao tác thừa, giúp nhân viên phục vụ khách hàng cực kỳ tốc độ.</p>
+                    <ul class="space-y-4 text-gray-700 font-bold">
+                        <li class="flex items-center"><i class="fa-solid fa-circle-check text-emerald-500 mr-3 text-lg"></i> Quét mã vạch, tìm tên mặt hàng trong 1 giây.</li>
+                        <li class="flex items-center"><i class="fa-solid fa-circle-check text-emerald-500 mr-3 text-lg"></i> Hỗ trợ thanh toán Tiền mặt & Tạo mã QR động.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12">
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=800" alt="Online Store" class="rounded-[2rem] shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6"><i class="fa-solid fa-globe"></i></div>
+                    <h3 class="text-3xl font-black text-gray-900 mb-4">Mở rộng kênh bán hàng Website Online</h3>
+                    <p class="text-gray-500 font-medium mb-6 leading-relaxed">Sở hữu ngay một trang đặt món trực tuyến chuyên nghiệp. Đơn hàng tự động đồng bộ Real-time về máy thu ngân.</p>
+                    <ul class="space-y-4 text-gray-700 font-bold">
+                        <li class="flex items-center"><i class="fa-solid fa-circle-check text-blue-500 mr-3 text-lg"></i> Khách hàng tự do chọn chi nhánh gần nhất.</li>
+                        <li class="flex items-center"><i class="fa-solid fa-circle-check text-blue-500 mr-3 text-lg"></i> Tự động làm mờ sản phẩm khi kho báo hết hàng.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="banggia" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-[1000px] mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black text-[#08142c] mb-4">Bảng giá dịch vụ phần mềm</h2>
+                <p class="text-gray-500 font-medium text-lg">Chi phí minh bạch. Dùng thử miễn phí 100% chức năng.</p>
+            </div>
+
+            <div class="flex justify-center mb-12">
+                <div class="bg-slate-50 p-1.5 rounded-xl inline-flex border border-gray-200 shadow-inner">
+                    <button id="btn-price-offline" onclick="switchPriceTab('offline')" class="px-8 py-3 bg-white rounded-lg font-bold text-emerald-600 transition-all flex items-center text-[15px] shadow-sm border border-gray-100"><i class="fa-solid fa-store mr-2"></i> Tại Cửa Hàng</button>
+                    <button id="btn-price-online" onclick="switchPriceTab('online')" class="px-8 py-3 text-gray-500 font-bold hover:text-emerald-600 transition-all flex items-center text-[15px]"><i class="fa-solid fa-globe mr-2"></i> Bán Hàng Online</button>
+                </div>
+            </div>
+
+            <div id="price-offline" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white border border-gray-200 rounded-3xl p-10 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black text-gray-800 mb-2">START UP</h3>
+                        <div class="mb-6"><span class="text-5xl font-black text-gray-900">0đ</span><span class="text-sm font-medium text-gray-500 ml-1">/vĩnh viễn</span></div>
+                        <ul class="space-y-4 mb-10 text-gray-600 text-sm font-bold">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Sử dụng Phần mềm Thu ngân (POS).</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Quản lý kho hàng xuất nhập cơ bản.</li>
+                        </ul>
+                    </div>
+                    <button onclick="toggleRegisterModal()" class="btn-3d w-full py-4 bg-slate-100 text-gray-700 rounded-xl font-black hover:bg-slate-200 border-b-4 border-slate-300">ĐĂNG KÝ MIỄN PHÍ</button>
+                </div>
+
+                <div class="bg-[#f0f9ff] border-2 border-blue-500 rounded-3xl p-10 relative shadow-lg flex flex-col justify-between transform md:scale-105 z-10">
+                    <div class="absolute top-0 right-6 bg-blue-500 text-white text-[11px] font-black px-4 py-1.5 rounded-b-lg uppercase tracking-widest shadow">Phổ biến</div>
+                    <div>
+                        <h3 class="text-xl font-black text-blue-700 mb-2">OMNI ENTERPRISE</h3>
+                        <div class="mb-6"><span class="text-5xl font-black text-blue-600">5%</span><span class="text-sm font-medium text-gray-500 ml-1">/tổng doanh thu</span></div>
+                        <ul class="space-y-4 mb-10 text-gray-700 text-sm font-bold">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-blue-500 mt-1 mr-3"></i> Mở khóa 100% tính năng hệ thống.</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-blue-500 mt-1 mr-3"></i> Cấp 1 Website đặt hàng Online đồng bộ Real-time.</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-blue-500 mt-1 mr-3"></i> Tự động tính toán Lợi nhuận thuần.</li>
+                        </ul>
+                    </div>
+                    <button onclick="toggleRegisterModal()" class="btn-3d w-full py-4 bg-blue-500 text-white rounded-xl font-black hover:bg-blue-600 border-b-4 border-blue-700">CHỌN GÓI NÀY</button>
+                </div>
+            </div>
+
+            <div id="price-online" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white border border-gray-200 rounded-3xl p-10 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black text-gray-800 mb-2">WEB STANDARD</h3>
+                        <div class="mb-6"><span class="text-5xl font-black text-gray-900">199k</span><span class="text-sm font-medium text-gray-500 ml-1">/tháng</span></div>
+                        <ul class="space-y-4 mb-10 text-gray-600 text-sm font-bold">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Tên miền chuyên nghiệp (.com / .vn).</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Khách hàng đặt món trực tiếp trên Web.</li>
+                        </ul>
+                    </div>
+                    <button onclick="toggleRegisterModal()" class="btn-3d w-full py-4 bg-slate-100 text-gray-700 rounded-xl font-black hover:bg-slate-200 border-b-4 border-slate-300">TẠO WEBSITE</button>
+                </div>
+                <div class="bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-10 relative shadow-lg flex flex-col justify-between transform md:scale-105 z-10">
+                    <div class="absolute top-0 right-6 bg-emerald-500 text-white text-[11px] font-black px-4 py-1.5 rounded-b-lg uppercase tracking-widest shadow">Cao Cấp</div>
+                    <div>
+                        <h3 class="text-xl font-black text-emerald-700 mb-2">WEB GROWTH</h3>
+                        <div class="mb-6"><span class="text-5xl font-black text-emerald-600">399k</span><span class="text-sm font-medium text-gray-500 ml-1">/tháng</span></div>
+                        <ul class="space-y-4 mb-10 text-gray-700 text-sm font-bold">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Hỗ trợ thanh toán chuyển khoản tự động.</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-1 mr-3"></i> Tối ưu chuẩn SEO lên Top Google.</li>
+                        </ul>
+                    </div>
+                    <button onclick="toggleRegisterModal()" class="btn-3d w-full py-4 bg-emerald-500 text-white rounded-xl font-black hover:bg-emerald-400 border-b-4 border-emerald-700">NÂNG CẤP NGAY</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="khachhang" class="py-24 sapo-dark text-white border-t border-gray-800">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-black mb-4">Câu chuyện khách hàng</h2>
+                <p class="text-gray-400 font-medium text-lg">Lắng nghe chia sẻ từ những đối tác đã áp dụng thành công Khánh Văn POS.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-10 rounded-3xl border border-gray-700 shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="text-emerald-400 text-5xl font-serif mb-4 leading-none">"</div>
+                    <p class="text-gray-300 font-medium text-sm leading-relaxed mb-8 italic">"Từ khi xài phần mềm này, tôi không cần lật sổ ghi chép nữa. Khách mua đồ là kho tự trừ, tự biết lời bao nhiêu. Cực kỳ sát với thực tế cửa hàng tạp hóa."</p>
+                    <div class="border-t border-gray-700 pt-6">
+                        <h4 class="font-bold text-white text-lg">Cô Lan</h4><p class="text-[12px] text-gray-400 font-bold uppercase mt-1">Chủ tiệm Tạp hóa</p>
+                    </div>
+                </div>
+                <div class="bg-gray-800 p-10 rounded-3xl border border-gray-700 shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="text-blue-400 text-5xl font-serif mb-4 leading-none">"</div>
+                    <p class="text-gray-300 font-medium text-sm leading-relaxed mb-8 italic">"Khách quen của tôi giờ lên web bấm chọn sữa, gạo... đơn tự nổ về máy tính ở quầy, tôi chỉ đóng gói và giao. Quản lý đơn online chưa bao giờ nhàn đến thế!"</p>
+                    <div class="border-t border-gray-700 pt-6">
+                        <h4 class="font-bold text-white text-lg">Chị Mai</h4><p class="text-[12px] text-gray-400 font-bold uppercase mt-1">Chủ Siêu thị Mini</p>
+                    </div>
+                </div>
+                <div class="bg-gray-800 p-10 rounded-3xl border border-gray-700 shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="text-orange-400 text-5xl font-serif mb-4 leading-none">"</div>
+                    <p class="text-gray-300 font-medium text-sm leading-relaxed mb-8 italic">"Tôi là người quản lý tổng. Bảng Dashboard giúp tôi ở nhà vẫn xem được doanh thu của mọi chi nhánh. Phí nền tảng 5% tự động thu rất minh bạch."</p>
+                    <div class="border-t border-gray-700 pt-6">
+                        <h4 class="font-bold text-white text-lg">Khánh VIP</h4><p class="text-[12px] text-gray-400 font-bold uppercase mt-1">Nhà đầu tư Chuỗi chi nhánh</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 pt-16 pb-8 border-t-[8px] border-emerald-500">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center space-x-2 mb-6">
+                    <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center text-sm font-black"><i class="fa-solid fa-cloud"></i></div>
+                    <span class="font-extrabold text-xl text-white tracking-tight">Khánh Văn<span class="text-emerald-500">.POS</span></span>
+                </div>
+                <p class="text-sm font-medium leading-relaxed">Nền tảng quản lý bán hàng hợp kênh toàn diện và dễ sử dụng nhất Việt Nam.</p>
+            </div>
+            <div>
+                <h4 class="font-black text-white mb-4 text-[15px]">Sản phẩm</h4>
+                <ul class="space-y-3 text-sm font-bold">
+                    <li><a href="#" class="hover:text-emerald-500 transition-colors">Phần mềm bán tại quầy</a></li>
+                    <li><a href="#" class="hover:text-emerald-500 transition-colors">Phần mềm bán online</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-black text-white mb-4 text-[15px]">Về chúng tôi</h4>
+                <ul class="space-y-3 text-sm font-bold">
+                    <li><a href="#" class="hover:text-emerald-500 transition-colors">Bảng giá dịch vụ</a></li>
+                    <li><a href="#" class="hover:text-emerald-500 transition-colors">Điều khoản sử dụng</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-black text-white mb-4 text-[15px]">Hỗ trợ 24/7</h4>
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <p class="text-[10px] font-black uppercase tracking-widest mb-1 text-emerald-500">Tổng đài Admin</p>
+                    <p class="text-xl font-black text-white">0348.660.610</p>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-[1200px] mx-auto px-6 pt-6 border-t border-gray-800 text-center flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm font-bold">&copy; 2026 Bản quyền thuộc về Khánh Văn POS. Đồ án xuất sắc nhất.</p>
+            <div class="flex space-x-4 mt-4 md:mt-0 text-xl text-gray-500">
+                <i class="fa-brands fa-facebook hover:text-blue-500 cursor-pointer"></i>
+                <i class="fa-brands fa-youtube hover:text-red-500 cursor-pointer"></i>
+            </div>
+        </div>
+    </footer>
+
+    <div id="registerModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-[100] p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-[850px] overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col md:flex-row border-0" id="registerModalContent">
+            
+            <div class="hidden md:flex flex-col justify-between w-[40%] bg-[#064e3b] p-10 text-white relative">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div class="relative z-10">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl mb-6 shadow-inner border-b-2 border-emerald-900"><i class="fa-solid fa-rocket"></i></div>
+                    <h3 class="font-black text-3xl mb-4 leading-tight">Bắt đầu<br>hành trình số</h3>
+                    <p class="text-[15px] text-emerald-100/90 font-medium">Tham gia cùng +230,000 cửa hàng chuyển đổi số thành công.</p>
+                </div>
+                <div class="relative z-10 text-xs font-bold text-emerald-200/50">&copy; 2026 Khánh Văn POS</div>
+            </div>
+
+            <div class="w-full md:w-[60%] p-10 lg:p-14 relative bg-white">
+                <button onclick="toggleRegisterModal()" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
+                
+                <h2 class="text-3xl font-black text-gray-800 mb-2">Dùng thử miễn phí</h2>
+                <p class="text-gray-500 font-bold text-sm mb-10">Mở cửa hàng của bạn ngay hôm nay.</p>
+                
+                <div id="regErrorMsg" class="hidden mb-6 p-4 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100"></div>
+                
+                <div class="space-y-5">
+                    <div class="relative">
+                        <i class="fa-solid fa-store absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="regStoreName" placeholder="Tên cửa hàng của bạn" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-gray-200 rounded-2xl outline-none font-bold text-sm focus:border-emerald-500 transition">
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-phone absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="tel" id="regPhone" placeholder="Số điện thoại" class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-gray-200 rounded-2xl outline-none font-bold text-sm focus:border-emerald-500 transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="regUsername" placeholder="Tên đăng nhập" class="w-full px-5 py-4 bg-slate-50 border border-gray-200 rounded-2xl outline-none font-bold text-sm focus:border-emerald-500 transition">
+                        <input type="password" id="regPassword" placeholder="Mật khẩu" class="w-full px-5 py-4 bg-slate-50 border border-gray-200 rounded-2xl outline-none font-bold text-sm focus:border-emerald-500 transition">
+                    </div>
+                    
+                    <label class="flex items-start space-x-3 mt-4 cursor-pointer">
+                        <input type="checkbox" id="regTerms" class="mt-1">
+                        <span class="text-[12px] text-gray-600 font-bold leading-relaxed">Tôi đồng ý với <button onclick="openTerms()" type="button" class="text-blue-600 hover:underline">Chính sách bảo mật & Điều khoản pháp lý</button> của nền tảng.</span>
+                    </label>
+                    
+                    <button onclick="submitRegistration()" class="btn-3d w-full mt-6 py-4 bg-gray-400 text-white rounded-2xl font-black text-lg border-gray-500 transition-colors flex items-center justify-center" id="btnSubmitReg">
+                        ĐĂNG KÝ NGAY <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="termsModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-[110] p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xl border-b-8 border-gray-900 overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-900 text-white">
+                <h2 class="font-black text-xl"><i class="fa-solid fa-scale-balanced mr-3 text-emerald-400"></i> QUY ĐỊNH PHÁP LÝ</h2>
+                <button onclick="closeTerms()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="p-10 text-sm font-medium space-y-6 text-gray-700 leading-relaxed bg-slate-50 max-h-[60vh] overflow-y-auto no-scrollbar">
+                <p class="font-bold text-gray-800 text-center">Bằng việc đăng ký tài khoản, Chủ cửa hàng mặc định chấp thuận các điều khoản ràng buộc sau:</p>
+                
+                <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+                    <h3 class="font-black text-emerald-600 mb-3 text-lg">Điều 1: Phí Nền tảng (5%)</h3>
+                    <p>Hệ thống cung cấp phần mềm quản lý đám mây Real-time. Chủ cửa hàng đồng ý trích xuất <strong>5% trên Tổng Doanh thu</strong> làm chi phí duy trì hệ thống. Phí được báo cáo tự động về Boss.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+                    <h3 class="font-black text-red-600 mb-3 text-lg">Điều 2: Quyền Quản trị tối cao</h3>
+                    <p>Tổng đài có <strong>toàn quyền Đình chỉ (Khóa) tài khoản ngay lập tức</strong> nếu phát hiện Chi nhánh có hành vi gian lận, vi phạm pháp luật hoặc trốn tránh chi phí nền tảng.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+                    <h3 class="font-black text-blue-600 mb-3 text-lg">Điều 3: Bảo mật dữ liệu</h3>
+                    <p>Hệ thống cam kết bảo vệ tuyệt đối thông tin kinh doanh và danh sách khách hàng của Chi nhánh. Tuyệt đối không chia sẻ cho bên thứ 3.</p>
+                </div>
+            </div>
+            <div class="p-6 bg-white border-t border-gray-200 text-right">
+                <button onclick="closeTerms()" class="btn-3d px-10 py-3 bg-gray-900 text-white font-black rounded-xl hover:bg-gray-800 border-black transition">ĐÃ HIỂU & ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchPriceTab(type) {
+            document.getElementById('price-offline').classList.add('hidden');
+            document.getElementById('price-online').classList.add('hidden');
+            document.getElementById('price-' + type).classList.remove('hidden');
+            const btnOff = document.getElementById('btn-offline');
+            const btnOn = document.getElementById('btn-online');
+            if(type === 'offline') {
+                btnOff.className = "px-8 py-3 bg-white rounded-lg font-bold text-emerald-600 border border-gray-100 shadow-sm";
+                btnOn.className = "px-8 py-3 text-gray-500 font-bold";
+            } else {
+                btnOn.className = "px-8 py-3 bg-white rounded-lg font-bold text-emerald-600 border border-gray-100 shadow-sm";
+                btnOff.className = "px-8 py-3 text-gray-500 font-bold";
+            }
+        }
+
+        // Đổi màu nút đăng ký khi check điều khoản
+        document.getElementById('regTerms').addEventListener('change', function() {
+            const btn = document.getElementById('btnSubmitReg');
+            if (this.checked) {
+                btn.classList.remove('bg-gray-400', 'border-gray-500');
+                btn.classList.add('bg-emerald-500', 'hover:bg-emerald-400', 'border-emerald-700');
+            } else {
+                btn.classList.add('bg-gray-400', 'border-gray-500');
+                btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-400', 'border-emerald-700');
+            }
+        });
+
+        const modal = document.getElementById('registerModal'); const modalContent = document.getElementById('registerModalContent'); const errorMsg = document.getElementById('regErrorMsg'); const termsModal = document.getElementById('termsModal');
+        function toggleRegisterModal() { if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10); } else { modal.classList.add('opacity-0'); modalContent.classList.add('scale-95'); setTimeout(() => modal.classList.add('hidden'), 300); } }
+        function openTerms() { termsModal.classList.remove('hidden'); } function closeTerms() { termsModal.classList.add('hidden'); }
+        
+        async function submitRegistration() {
+            const storeName = document.getElementById('regStoreName').value.trim(); const username = document.getElementById('regUsername').value.trim(); const password = document.getElementById('regPassword').value.trim(); const phone = document.getElementById('regPhone').value.trim(); const terms = document.getElementById('regTerms').checked;
+            errorMsg.classList.add('hidden');
+            if (!storeName || !username || !password || !phone) { showError("Vui lòng điền đủ thông tin!"); return; }
+            if (!terms) { showError("Cần đồng ý Quy định pháp lý!"); return; }
+            try {
+                const response = await fetch('http://localhost:3000/api/register-store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: username, password: password, storeName: storeName }) });
+                const data = await response.json();
+                if (data.success) { alert(`Đăng ký thành công! Mã: ${data.storeId}`); window.location.href = 'app.html'; } else { showError(data.message || "Lỗi!"); }
+            } catch (error) { showError("Lỗi kết nối Server!"); }
+        }
+        function showError(text) { errorMsg.innerText = text; errorMsg.classList.remove('hidden'); }
+    </script>
+</body>
+</html>
